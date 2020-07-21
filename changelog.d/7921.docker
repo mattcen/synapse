@@ -1,1 +1,1 @@
-Added multi-arch support (arm64,arm64/v7 and v8) for the docker images. Contributed by @maquis196.
+Added multi-arch support (arm64,arm64/v8) for the docker images. Contributed by @maquis196.
