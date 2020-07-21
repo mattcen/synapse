@@ -13,7 +13,7 @@ jobs:
           platforms: linux/amd64
       - docker_build:
           tag: -t matrixdotorg/synapse:${CIRCLE_TAG} -t matrixdotorg/synapse:${CIRCLE_TAG}-py3
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64,linux/arm64/v7,linux/arm64/v8
 
   dockerhubuploadlatest:
     docker:
@@ -28,7 +28,7 @@ jobs:
           platforms: linux/amd64
       - docker_build:
           tag: -t matrixdotorg/synapse:latest -t matrixdotorg/synapse:latest-py3
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64,linux/arm64/v7,linux/arm64/v8
 
 workflows:
   build:
