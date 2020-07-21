@@ -20,10 +20,18 @@ FROM docker.io/python:${PYTHON_VERSION}-slim as builder
 
 # install the OS build deps
 
-
 RUN apt-get update && apt-get install -y \
     build-essential \
+    libffi-dev \
+    libjpeg-dev \
     libpq-dev \
+    libssl-dev \
+    libxml++2.6-dev \
+    libxslt1-dev \
+    python3-cryptography \
+    python3-dev \
+    python3-nacl \
+    python3-wheel \
  && rm -rf /var/lib/apt/lists/*
 
 # Build dependencies that are not available as wheels, to speed up rebuilds
@@ -34,6 +42,7 @@ RUN pip install --prefix="/install" --no-warn-script-location \
         prometheus-client \
         psycopg2 \
         pycparser \
+        pynacl \
         pyrsistent \
         pyyaml \
         simplejson \
