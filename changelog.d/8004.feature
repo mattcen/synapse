@@ -1,0 +1,1 @@
+Insert a confirmation page between clicking the email link and resetting your password to prevent mishaps.
