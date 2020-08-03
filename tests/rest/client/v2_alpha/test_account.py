@@ -258,7 +258,7 @@ class PasswordResetTestCase(unittest.HomeserverTestCase):
         # Replace the path with the confirmation path
         path = re.sub(
             "^/_matrix.*submit_token",
-            "/_synapse/client/account/v1/password_reset/email/submit_token_confirm",
+            "/_matrix/client/unstable/password_reset/email/submit_token_confirm",
             path,
         )
 

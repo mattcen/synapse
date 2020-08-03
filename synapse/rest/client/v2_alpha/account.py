@@ -205,11 +205,9 @@ class PasswordResetConfirmationSubmitTokenServlet(RestServlet):
     submit the same parameters to this servlet.
     """
 
-    PATTERNS = [
-        re.compile(
-            "^/_synapse/client/account/v1/password_reset/(?P<medium>[^/]*)/submit_token_confirm$"
-        )
-    ]
+    PATTERNS=client_patterns(
+        "/password_reset/(?P<medium>[^/]*)/submit_token_confirm$", releases=(), unstable=True
+    )
 
     def __init__(self, hs):
         """

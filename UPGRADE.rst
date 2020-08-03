@@ -92,7 +92,7 @@ been emailed to them.
 
 To complete password reset, the page must include a way to make a `POST`
 request to
-``/_synapse/client/account/v1/password_reset/{medium}/submit_token_confirm``
+``/_matrix/client/unstable/password_reset/{medium}/submit_token_confirm``
 with the query parameters from the original link. See the file itself for more
 details.
 
