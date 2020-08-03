@@ -183,6 +183,7 @@ class PasswordResetSubmitTokenServlet(RestServlet):
         sid = parse_string(request, "sid", required=True)
         token = parse_string(request, "token", required=True)
         client_secret = parse_string(request, "client_secret", required=True)
+        assert_valid_client_secret(client_secret)
 
         # Show a confirmation page, just in case someone accidentally clicked this link when
         # they didn't mean to
@@ -228,7 +229,6 @@ class PasswordResetConfirmationSubmitTokenServlet(RestServlet):
         sid = parse_string(request, "sid", required=True)
         token = parse_string(request, "token", required=True)
         client_secret = parse_string(request, "client_secret", required=True)
-        assert_valid_client_secret(client_secret)
 
         # Attempt to validate a 3PID session
         try:
