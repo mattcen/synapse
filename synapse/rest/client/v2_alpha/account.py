@@ -205,8 +205,10 @@ class PasswordResetConfirmationSubmitTokenServlet(RestServlet):
     submit the same parameters to this servlet.
     """
 
-    PATTERNS=client_patterns(
-        "/password_reset/(?P<medium>[^/]*)/submit_token_confirm$", releases=(), unstable=True
+    PATTERNS = client_patterns(
+        "/password_reset/email/submit_token_confirm$",
+        releases=(),
+        unstable=True,
     )
 
     def __init__(self, hs):
@@ -226,11 +228,6 @@ class PasswordResetConfirmationSubmitTokenServlet(RestServlet):
             )
 
     async def on_POST(self, request, medium):
-        # We currently only handle threepid token submissions for email
-        if medium != "email":
-            raise SynapseError(
-                400, "This medium is currently not supported for password resets"
-            )
         if self.config.threepid_behaviour_email == ThreepidBehaviour.OFF:
             if self.config.local_threepid_handling_disabled_due_to_email_config:
                 logger.warning(
