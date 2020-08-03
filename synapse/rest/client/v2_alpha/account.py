@@ -158,12 +158,15 @@ class PasswordResetSubmitTokenServlet(RestServlet):
             hs (synapse.server.HomeServer): server
         """
         super(PasswordResetSubmitTokenServlet, self).__init__()
-        self.config = hs.config
-        if self.config.threepid_behaviour_email == ThreepidBehaviour.LOCAL:
+        if hs.config.threepid_behaviour_email == ThreepidBehaviour.LOCAL:
             (self.confirmation_email_template,) = load_jinja2_templates(
-                self.config.email_template_dir,
-                [self.config.email_password_reset_template_confirmation_html],
+                hs.config.email_template_dir,
+                [hs.config.email_password_reset_template_confirmation_html],
             )
+        self._threepid_behaviour_email = hs.config.threepid_behaviour_email
+        self._local_threepid_handling_disabled_due_to_email_config = (
+            hs.config.local_threepid_handling_disabled_due_to_email_config
+        )
 
     async def on_GET(self, request, medium):
         # We currently only handle threepid token submissions for email
@@ -171,8 +174,8 @@ class PasswordResetSubmitTokenServlet(RestServlet):
             raise SynapseError(
                 400, "This medium is currently not supported for password resets"
             )
-        if self.config.threepid_behaviour_email == ThreepidBehaviour.OFF:
-            if self.config.local_threepid_handling_disabled_due_to_email_config:
+        if self._threepid_behaviour_email == ThreepidBehaviour.OFF:
+            if self._local_threepid_handling_disabled_due_to_email_config:
                 logger.warning(
                     "Password reset emails have been disabled due to lack of an email config"
                 )
