@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import logging
-import re
 from http import HTTPStatus
 
 from synapse.api.constants import LoginType
@@ -206,9 +205,7 @@ class PasswordResetConfirmationSubmitTokenServlet(RestServlet):
     """
 
     PATTERNS = client_patterns(
-        "/password_reset/email/submit_token_confirm$",
-        releases=(),
-        unstable=True,
+        "/password_reset/email/submit_token_confirm$", releases=(), unstable=True,
     )
 
     def __init__(self, hs):
