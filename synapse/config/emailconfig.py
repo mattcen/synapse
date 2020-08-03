@@ -215,8 +215,8 @@ class EmailConfig(Config):
                 "add_threepid_template_text", "add_threepid.txt"
             )
 
-            self.email_password_reset_template_confirmation_html = email_config.get(
-                "password_reset_confirmation_html", "password_reset_confirmation.html"
+            self.email_password_reset_template_confirmation_html = (
+                "password_reset_confirmation.html"
             )
             self.email_password_reset_template_failure_html = email_config.get(
                 "password_reset_template_failure_html", "password_reset_failure.html"
