@@ -216,14 +216,16 @@ class PasswordResetConfirmationSubmitTokenServlet(RestServlet):
         """
         super(PasswordResetConfirmationSubmitTokenServlet, self).__init__()
         self.auth = hs.get_auth()
-        self.config = hs.config
         self.clock = hs.get_clock()
         self.store = hs.get_datastore()
-        if self.config.threepid_behaviour_email == ThreepidBehaviour.LOCAL:
+        if hs.config.threepid_behaviour_email == ThreepidBehaviour.LOCAL:
             (self.failure_email_template,) = load_jinja2_templates(
-                self.config.email_template_dir,
-                [self.config.email_password_reset_template_failure_html],
+                hs.config.email_template_dir,
+                [hs.config.email_password_reset_template_failure_html],
             )
+        self._email_password_reset_template_success_html = (
+            hs.config.email_password_reset_template_success_html
+        )
 
     async def on_POST(self, request, medium):
         sid = parse_string(request, "sid", required=True)
@@ -250,7 +252,7 @@ class PasswordResetConfirmationSubmitTokenServlet(RestServlet):
                     return None
 
             # Otherwise show the success template
-            html = self.config.email_password_reset_template_success_html
+            html = self._email_password_reset_template_success_html
             status_code = 200
         except ThreepidValidationError as e:
             status_code = e.code
