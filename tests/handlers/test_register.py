@@ -20,6 +20,7 @@ from twisted.internet import defer
 from synapse.api.constants import UserTypes
 from synapse.api.errors import Codes, ResourceLimitError, SynapseError
 from synapse.handlers.register import RegistrationHandler
+from synapse.spam_checker_api import RegistrationBehaviour
 from synapse.types import RoomAlias, UserID, create_requester
 
 from tests.unittest import override_config
@@ -27,7 +28,7 @@ from tests.unittest import override_config
 from .. import unittest
 
 
-class RegistrationHandlers(object):
+class RegistrationHandlers:
     def __init__(self, hs):
         self.registration_handler = RegistrationHandler(hs)
 
@@ -473,6 +474,38 @@ class RegistrationTestCase(unittest.HomeserverTestCase):
         self.get_failure(
             self.handler.register_user(localpart=invalid_user_id), SynapseError
         )
+
+    def test_spam_checker_deny(self):
+        """A spam checker can deny registration, which results in an error."""
+
+        class DenyAll:
+            def check_registration_for_spam(
+                self, email_threepid, username, request_info
+            ):
+                return RegistrationBehaviour.DENY
+
+        # Configure a spam checker that denies all users.
+        spam_checker = self.hs.get_spam_checker()
+        spam_checker.spam_checkers = [DenyAll()]
+
+        self.get_failure(self.handler.register_user(localpart="user"), SynapseError)
+
+    def test_spam_checker_shadow_ban(self):
+        """A spam checker can choose to shadow ban a user, which allows registration to succeed."""
+
+        class BanAll:
+            def check_registration_for_spam(
+                self, email_threepid, username, request_info
+            ):
+                return RegistrationBehaviour.SHADOW_BAN
+
+        # Configure a spam checker that denies all users.
+        spam_checker = self.hs.get_spam_checker()
+        spam_checker.spam_checkers = [BanAll()]
+
+        user_id = self.get_success(self.handler.register_user(localpart="user"))
+        is_shadow_banned = self.get_success(self.store.is_shadow_banned(user_id))
+        self.assertTrue(is_shadow_banned)
 
     async def get_or_create_user(
         self, requester, localpart, displayname, password_hash=None
