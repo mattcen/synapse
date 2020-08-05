@@ -44,7 +44,6 @@ from synapse.http.servlet import (
     parse_string,
 )
 from synapse.push.mailer import load_jinja2_templates
-from synapse.spam_checker_api import RegistrationBehaviour
 from synapse.util.msisdn import phone_number_to_msisdn
 from synapse.util.ratelimitutils import FederationRateLimiter
 from synapse.util.stringutils import assert_valid_client_secret, random_string
@@ -389,8 +388,6 @@ class RegisterRestServlet(RestServlet):
         self.password_policy_handler = hs.get_password_policy_handler()
         self.clock = hs.get_clock()
 
-        self.spam_checker = hs.get_spam_checker()
-
         self._registration_flows = _calculate_registration_flows(
             hs.config, self.auth_handler
         )
@@ -587,31 +584,13 @@ class RegisterRestServlet(RestServlet):
                 session_id
             )
 
-            result = self.spam_checker.check_registration_for_spam(
-                threepid, desired_username, entries,
-            )
-
-            if result == RegistrationBehaviour.DENY:
-                logger.info(
-                    "Blocked registration of %r", desired_username,
-                )
-                # We return a 429 to make it not obvious that they've been
-                # denied.
-                raise SynapseError(429, "Rate limited")
-
-            shadow_banned = result == RegistrationBehaviour.SHADOW_BAN
-            if shadow_banned:
-                logger.info(
-                    "Shadow banning registration of %r", desired_username,
-                )
-
             registered_user_id = await self.registration_handler.register_user(
                 localpart=desired_username,
                 password_hash=new_password_hash,
                 guest_access_token=guest_access_token,
                 threepid=threepid,
                 address=client_addr,
-                shadow_banned=shadow_banned,
+                user_agent_ips=entries,
             )
             # Necessary due to auth checks prior to the threepid being
             # written to the db
