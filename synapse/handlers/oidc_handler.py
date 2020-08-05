@@ -695,7 +695,7 @@ class OidcHandler:
         user_agent = request.requestHeaders.getRawHeaders(b"User-Agent", default=[b""])[
             0
         ].decode("ascii", "surrogateescape")
-        ip_address = self.hs.get_ip_from_request(request)
+        ip_address = self.hs.get_ip_from_request(request)  # type: ignore
 
         # Call the mapper to register/login the user
         try:
