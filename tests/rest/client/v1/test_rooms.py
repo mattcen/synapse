@@ -2046,6 +2046,7 @@ class ShadowBanTestCase(unittest.HomeserverTestCase):
         self.assertIn("event_id", result)
         event_id = result["event_id"]
 
+        # But the event ID is not actually in the room.
         latest_events = self.get_success(
             self.store.get_latest_event_ids_in_room(room_id)
         )
